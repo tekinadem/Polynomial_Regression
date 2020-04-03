@@ -1,0 +1,73 @@
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.preprocessing import PolynomialFeatures
+
+# Polynomial_Regression
+
+x = np.random.randn(150)
+simple_f = lambda x: 0.66 + 2.53*x + -1.2*x**2 + np.random.randn(*np.array(x).shape)
+y = simple_f(x)
+
+# Firstly Linear Regression
+model = LinearRegression()
+model.fit(
+    x.reshape(-1, 1),
+    y
+)
+
+xx = np.linspace(-3, 3, 100)
+yy = model.predict(xx.reshape(-1, 1))
+plt.scatter(x, y, label='real value')
+plt.title('$ax + b = y$ predicted value')
+plt.xlabel('X')
+plt.ylabel('y')
+_ = plt.plot(xx, yy, 'r', label='predicted value')
+_ = plt.legend()
+
+
+
+y_pred = model.predict(x.reshape(-1, 1))
+plt.scatter(y, y_pred)
+plt.plot(y_pred, y_pred, color='red', label='$x=y$')
+plt.xlabel('Real value')
+plt.grid()
+plt.legend()
+plt.title('Predicted value vs Real value\n Ideal points $x=y$ should like this.')
+_ = plt.ylabel('Predicted value')
+
+
+error_of_model = y - y_pred
+_ = plt.hist(-error_of_model, bins=10)
+plt.xlabel('Error')
+_ = plt.title('distribution of error')
+
+# Secondly Polynomial Regression
+
+DEG = 3
+transformator = PolynomialFeatures(DEG, include_bias=False) # 3rd degree 
+
+transformator.fit(x.reshape(-1, 1))
+xp = transformator.transform(x.reshape(-1 , 1))
+
+model_p = LinearRegression()
+
+model_p.fit(xp, y)
+model_p.score(xp, y)
+
+xx = np.linspace(x.min(), x.max(), 1000)
+yy = model_p.predict(
+    transformator.transform(xx.reshape(-1, 1))
+                    )
+                    
+plt.scatter(x, y)
+_ = plt.plot(xx, yy, color='red')
+
+y_pred = model_p.predict(transformator.transform(x.reshape(-1, 1)))
+
+
+
+
+
+
+
+
